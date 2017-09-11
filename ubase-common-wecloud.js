@@ -46,8 +46,28 @@
         gConfig = transition.config
         gRouter = transition.router
 
+        /**  私有云换肤处理 **/
+        var platformConfig = localStorage.getItem("schoolConfig");
+        var newSkin = localStorage.getItem("skinName");
+        var userParams = getUserParams()
+
+        if (platformConfig) {
+            if (platformConfig.skin) {
+                gConfig['THEME'] = platformConfig.skin;
+            }
+        }
+
+        if (newSkin) {
+            gConfig['THEME'] = newSkin;
+        }
+
+        if (userParams.THEME) {
+            gConfig['THEME'] = userParams.THEME;
+        }
+        /*** end 私有云换肤处理  ***/
+
         if(location.host.indexOf('localhost') === -1 && location.host.indexOf('172.') === -1){
-            gConfig['RESOURCE_SERVER'] = 'http://feres.cpdaily.com'
+            gConfig['RESOURCE_SERVER'] = 'https://feres.cpdaily.com'
         }
 
         gResource = getResource()
@@ -63,7 +83,7 @@
         var resource = {
             'RESOURCE_VERSION': '100003',
             'PUBLIC_CSS': [
-                '/bower_components/iview/styles/iview.css'
+                '/bower_components/iview/styles/iview-{{theme}}.css'
             ],
 
             'PUBLIC_BASE_JS': [
@@ -139,8 +159,6 @@
         var config = gConfig
         var cdn = getCdn()
         var publicCss = gResource['PUBLIC_CSS']
-        var bhVersion = config['BH_VERSION']
-        var version = bhVersion ? ('-' + bhVersion) : ''
         var theme = config['THEME'] || 'blue'
         var regEx = /fe_components|bower_components/
         var cssUrl = []
@@ -148,7 +166,7 @@
         for (var i = 0; i < publicCss.length; i++) {
             var url = addTimestamp(publicCss[i])
             if (regEx.test(publicCss[i])) {
-                cssUrl.push(cdn + url.replace(/\{\{theme\}\}/, theme).replace(/\{\{version\}\}/, version))
+                cssUrl.push(cdn + url.replace(/\{\{theme\}\}/, theme))
             } else {
                 cssUrl.push(url)
             }
