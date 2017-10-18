@@ -239,6 +239,13 @@
             if(!(data && data._showLoading === false)){
                 hideLoading()
             }
+            if(response.status >= 400){
+                throw {
+                    status:response.status,
+                    message:'['+response.status+'] '+response.statusText
+                }
+                return
+            }
             return response.json()
         }).then(function(res) {
             if(res['unauthorizedAjax-d3472c24-cc96-47ba-9498-27aaf2692cd3'] == '500'){
